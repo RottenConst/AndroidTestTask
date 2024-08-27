@@ -1,8 +1,19 @@
 package com.example.androidtesttask.screen
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -10,9 +21,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.androidtesttask.Greeting
+import androidx.compose.ui.unit.dp
 import com.example.androidtesttask.ui.theme.AndroidTestTaskTheme
 
 @Composable
@@ -22,10 +34,7 @@ fun ListProductsScreen() {
             TopBar(title = "Список товаров")
         }
     ) { innerPadding ->
-        Greeting(
-            name = "Android",
-            modifier = Modifier.padding(innerPadding)
-        )
+        CardProduct(modifier = Modifier.padding(innerPadding))
     }
 
 }
@@ -47,11 +56,70 @@ fun TopBar(title: String) {
     )
 }
 
+/**
+   Карточка товара
+ */
+@Composable
+fun CardProduct(modifier: Modifier) {
+    ElevatedCard(
+        modifier = modifier
+            .padding(8.dp),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 4.dp
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        )
+    ) {
+        Column(modifier = Modifier.padding(8.dp)) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween)
+            {
+                //title
+                Text(text = "Title", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleLarge)
+                //icon
+                Row {
+                    Icon(imageVector = Icons.Default.Create, contentDescription = "", tint = Color(0xFF6200EE))
+                    Icon(imageVector = Icons.Default.Delete, contentDescription = "", tint = Color(0xFFCC4100))
+                }
+            }
+            //tag
+            FilterChip(selected = false, onClick = {}, label = { Text(text = "Tag") })
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                //amount
+                Column {
+                    Text("На складе", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyMedium)
+                    Text(text = "10", style = MaterialTheme.typography.bodyMedium)
+                }
+                //date
+                Column {
+                    Text(text = "Дата добавления", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyMedium)
+                    Text(text = "01.10.2021", style = MaterialTheme.typography.bodyMedium)
+                }
+            }
+        }
+    }
+}
+
 
 @Preview
 @Composable
 fun TopBarPreview() {
     AndroidTestTaskTheme {
         TopBar(title = "Список товаров")
+    }
+}
+
+@Preview
+@Composable
+fun CardProductPreview() {
+    AndroidTestTaskTheme {
+        CardProduct(modifier = Modifier)
     }
 }
