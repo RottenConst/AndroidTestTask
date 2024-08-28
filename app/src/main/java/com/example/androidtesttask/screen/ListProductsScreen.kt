@@ -23,6 +23,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -30,34 +32,29 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.androidtesttask.R
 import com.example.androidtesttask.data.Item
+import com.example.androidtesttask.screen.vm.AppViewModelProvider
+import com.example.androidtesttask.screen.vm.ListProductViewModel
 import com.example.androidtesttask.ui.theme.AndroidTestTaskTheme
 
 @Composable
-fun ListProductsScreen() {
+fun ListProductsScreen(viewModel: ListProductViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
 
-    val listItem: List<Item> = List(10) {
-        Item(
-            id = it,
-            name = "iPhone 13",
-            time = 1633046400000,
-            tags = listOf("Телефон", "Новый", "Распродажа"),
-            amount = 15,
-        )
-    }
+    val listItem by viewModel.items.observeAsState()
 
-    Scaffold (
+    Scaffold(
         topBar = {
             TopBar(title = stringResource(id = R.string.list_products))
         }
     ) { innerPadding ->
         LazyColumn(modifier = Modifier.padding(innerPadding)) {
-            items(listItem.size) {
-                CardProduct(item = listItem[it])
+            val items: List<Item> = listItem ?: emptyList()
+            items(items.size) { item ->
+                CardProduct(item = items[item], convertTime = { viewModel.parseUnixTimestamp(it) })
             }
         }
-
     }
 
 }
@@ -70,7 +67,8 @@ fun TopBar(title: String) {
             Text(
                 text = title,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth())
+                modifier = Modifier.fillMaxWidth()
+            )
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = Color(0xFFB1DCFC),
@@ -80,11 +78,11 @@ fun TopBar(title: String) {
 }
 
 /**
-   Карточка товара
+ * Карточка товара
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun CardProduct(modifier: Modifier = Modifier, item: Item) {
+fun CardProduct(modifier: Modifier = Modifier, item: Item, convertTime: (Long) -> String) {
     ElevatedCard(
         modifier = modifier
             .padding(8.dp),
@@ -103,11 +101,23 @@ fun CardProduct(modifier: Modifier = Modifier, item: Item) {
                 horizontalArrangement = Arrangement.SpaceBetween)
             {
                 //title
-                Text(text = item.name, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleLarge)
+                Text(
+                    text = item.name,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleLarge
+                )
                 //icon
                 Row {
-                    Icon(imageVector = Icons.Default.Create, contentDescription = "", tint = Color(0xFF6200EE))
-                    Icon(imageVector = Icons.Default.Delete, contentDescription = "", tint = Color(0xFFCC4100))
+                    Icon(
+                        imageVector = Icons.Default.Create,
+                        contentDescription = "",
+                        tint = Color(0xFF6200EE)
+                    )
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "",
+                        tint = Color(0xFFCC4100)
+                    )
                 }
             }
             //tag
@@ -133,13 +143,21 @@ fun CardProduct(modifier: Modifier = Modifier, item: Item) {
             ) {
                 //amount
                 Column {
-                    Text(stringResource(id = R.string.in_stock), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyMedium)
+                    Text(
+                        stringResource(id = R.string.in_stock),
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                     Text(text = item.amount.toString(), style = MaterialTheme.typography.bodyMedium)
                 }
                 //date
                 Column {
-                    Text(text = stringResource(id = R.string.date_of_addition), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyMedium)
-                    Text(text = "01.10.2021", style = MaterialTheme.typography.bodyMedium)
+                    Text(
+                        text = stringResource(id = R.string.date_of_addition),
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Text(text = convertTime(item.time), style = MaterialTheme.typography.bodyMedium)
                 }
             }
         }
@@ -169,8 +187,11 @@ fun CardProductPreview() {
     }
     AndroidTestTaskTheme {
         LazyColumn {
-            items(listItem.size) {
-                CardProduct(modifier = Modifier, item = listItem[it])
+            items(listItem.size) { item ->
+                CardProduct(
+                    modifier = Modifier,
+                    item = listItem[item],
+                    convertTime = { it.toString() })
             }
         }
     }
