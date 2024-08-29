@@ -94,6 +94,10 @@ fun ListProductsScreen(viewModel: ListProductViewModel = viewModel(factory = App
 
 }
 
+/**
+ * Топ бар
+ * [title] - заголовок экрана
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(title: String) {
@@ -113,6 +117,10 @@ fun TopBar(title: String) {
 
 /**
  * Карточка товара
+ * [item] - товар
+ * [date] - дата добавления в определённом формате
+ * [updateItem] - обновление товара
+ * [deleteItem] - удаление товара
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
