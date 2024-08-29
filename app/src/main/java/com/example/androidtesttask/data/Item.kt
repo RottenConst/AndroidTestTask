@@ -13,5 +13,5 @@ data class Item(
     val time: Long,
     @TypeConverters(TagsConvertor::class)
     val tags: List<String>,
-    val amount: Int
+    var amount: Int
 )
