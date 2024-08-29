@@ -13,6 +13,6 @@ interface ItemDao {
     @Delete
     suspend fun delete(item: Item)
 
-    @Query("SELECT * from item")
-    suspend fun getAllItems(): List<Item>
+    @Query("SELECT * from item WHERE name LIKE :searchText")
+    suspend fun searchItem(searchText: String): List<Item>
 }
