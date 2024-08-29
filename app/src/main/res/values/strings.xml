@@ -1,6 +1,16 @@
 <resources>
-    <string name="app_name">AndroidTestTask</string>
+    <string name="app_name">IP Test Task</string>
     <string name="list_products">Список товаров</string>
     <string name="in_stock">На складе</string>
     <string name="date_of_addition">Дата добавления</string>
+    <string name="out_of_stock">Нет в наличии</string>
+    <string name="the_quantity_item">Количество товара</string>
+    <string name="cansel">Отмена</string>
+    <string name="apply">Принять</string>
+    <string name="delete_item">Удаление товара</string>
+    <string name="do_you_really_want">Вы действительно хотите удалить товар выбранный товар?</string>
+    <string name="no">Нет</string>
+    <string name="yes">Да</string>
+    <string name="product_search">Поиск товаров</string>
+
 </resources>
