@@ -42,6 +42,9 @@ import com.example.androidtesttask.data.Item
 import com.example.androidtesttask.screen.vm.AppViewModelProvider
 import com.example.androidtesttask.screen.vm.ListProductViewModel
 import com.example.androidtesttask.ui.theme.AndroidTestTaskTheme
+import com.example.androidtesttask.ui.theme.Blue
+import com.example.androidtesttask.ui.theme.Purple
+import com.example.androidtesttask.ui.theme.Red
 
 @Composable
 fun ListProductsScreen(viewModel: ListProductViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
