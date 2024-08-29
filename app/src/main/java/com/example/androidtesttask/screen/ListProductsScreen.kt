@@ -89,7 +89,7 @@ fun TopBar(title: String) {
 fun CardProduct(modifier: Modifier = Modifier, item: Item, convertTime: (Long) -> String) {
     ElevatedCard(
         modifier = modifier
-            .padding(8.dp),
+            .padding(horizontal = 8.dp, vertical = 8.dp),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 4.dp
         ),
@@ -107,26 +107,30 @@ fun CardProduct(modifier: Modifier = Modifier, item: Item, convertTime: (Long) -
                 //title
                 Text(
                     text = item.name,
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleLarge
+                    fontWeight = FontWeight.W500,
+                    fontSize = 20.sp
                 )
                 //icon
                 Row {
                     Icon(
+                        modifier = modifier
+                            .padding(horizontal = 16.dp)
+                            .clickable { isVisibleSetAmount = true },
                         imageVector = Icons.Default.Create,
                         contentDescription = "",
-                        tint = Color(0xFF6200EE)
+                        tint = Purple
                     )
                     Icon(
+                        modifier = modifier.clickable { isVisibleDeleteDialog = true },
                         imageVector = Icons.Default.Delete,
                         contentDescription = "",
-                        tint = Color(0xFFCC4100)
+                        tint = Red
                     )
                 }
             }
             //tag
             FlowRow(
-                modifier = Modifier.padding(4.dp),
+                modifier = modifier.padding(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 maxItemsInEachRow = 3
@@ -137,29 +141,36 @@ fun CardProduct(modifier: Modifier = Modifier, item: Item, convertTime: (Long) -
                         selected = false,
                         onClick = {},
                         label = {
-                            Text(text = tag, style = MaterialTheme.typography.bodyMedium)
+                            Text(text = tag)
                         })
                 }
             }
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = modifier.width(280.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 //amount
                 Column {
                     Text(
                         stringResource(id = R.string.in_stock),
-                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Text(
+                        text = if (item.amount > 0 ) {
+                            item.amount.toString()
+                        } else {
+                            stringResource(id = R.string.out_of_stock)
+                        },
                         style = MaterialTheme.typography.bodyMedium
                     )
-                    Text(text = item.amount.toString(), style = MaterialTheme.typography.bodyMedium)
                 }
                 //date
                 Column {
                     Text(
                         text = stringResource(id = R.string.date_of_addition),
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.bodyMedium
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium
                     )
                     Text(text = convertTime(item.time), style = MaterialTheme.typography.bodyMedium)
                 }
