@@ -164,12 +164,46 @@ fun CardProduct(modifier: Modifier = Modifier, item: Item, convertTime: (Long) -
     }
 }
 
+/**
+ * Поле поиска
+ * [searchText] текст для поиска
+ * [searchProduct] метод поиска
+ */
+@Composable
+fun SearchItemTextField(searchText: String, searchProduct: (String) -> Unit) {
+    OutlinedTextField(
+        value = searchText,
+        onValueChange = {
+            searchProduct(it) },
+        label = { Text(stringResource(id = R.string.product_search)) },
+        singleLine = true,
+        modifier = Modifier
+            .padding(top = 8.dp, bottom = 16.dp, start = 8.dp, end = 8.dp)
+            .fillMaxWidth(),
+        textStyle = TextStyle.Default.copy(fontSize = 14.sp),
+        leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = "Search")},
+        trailingIcon = { if(searchText.isNotBlank()) Icon(imageVector = Icons.Rounded.Clear, contentDescription = "Clear", modifier = Modifier.clickable { searchProduct("") })},
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedLabelColor = Color.Gray,
+            focusedContainerColor = Color.White,
+            unfocusedContainerColor = Color.White,
+        )
+    )
+}
 
 @Preview
 @Composable
 fun TopBarPreview() {
     AndroidTestTaskTheme {
         TopBar(title = "Список товаров")
+    }
+}
+
+@Preview
+@Composable
+fun SearchTextFieldPreview() {
+    AndroidTestTaskTheme {
+        SearchItemTextField(searchText = "", searchProduct = {})
     }
 }
 
