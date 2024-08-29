@@ -53,7 +53,11 @@ import com.example.androidtesttask.ui.theme.Red
 @Composable
 fun ListProductsScreen(viewModel: ListProductViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
 
-    val listItem by viewModel.items.observeAsState()
+    viewModel.search("")
+    val productList by viewModel.products.observeAsState()
+    var search by rememberSaveable {
+        mutableStateOf("")
+    }
 
     Scaffold(
         topBar = {
@@ -61,9 +65,25 @@ fun ListProductsScreen(viewModel: ListProductViewModel = viewModel(factory = App
         }
     ) { innerPadding ->
         LazyColumn(modifier = Modifier.padding(innerPadding)) {
-            val items: List<Item> = listItem ?: emptyList()
-            items(items.size) { item ->
-                CardProduct(item = items[item], convertTime = { viewModel.parseUnixTimestamp(it) })
+            if (productList!= null) {
+                item {
+                    SearchItemTextField(
+                        search,
+                        searchProduct = { search = viewModel.search(it) },
+                        )
+                }
+
+                items(productList?.size ?: 0) { item ->
+                    productList?.get(item)
+                        ?.let { product->
+                            CardProduct(
+                                item = product,
+                                date = viewModel.parseUnixTimestamp(product.time),
+                                updateItem = {viewModel.updateItem(it)},
+                                deleteItem = {viewModel.deleteItem(it)}
+                            )
+                        }
+                }
             }
         }
     }
@@ -92,7 +112,42 @@ fun TopBar(title: String) {
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun CardProduct(modifier: Modifier = Modifier, item: Item, convertTime: (Long) -> String) {
+fun CardProduct(
+    modifier: Modifier = Modifier,
+    item: Item,
+    date: String,
+    updateItem: (Item) -> Unit,
+    deleteItem: (Item) -> Unit
+) {
+    // виден ли диалог для изменения количества товара
+    var isVisibleSetAmount by remember {
+        mutableStateOf(false)
+    }
+
+    // виден ли диалог для удаления товара
+    var isVisibleDeleteDialog by remember {
+        mutableStateOf(false)
+    }
+
+    // изменение количества товара
+    SetAmountAlertDialog(
+        isVisibleDialog = isVisibleSetAmount,
+        amount = item.amount,
+        setVisible = {isVisibleSetAmount = !isVisibleSetAmount},
+        saveItem = {
+            updateItem(item.copy(amount = it))
+        }
+    )
+
+    // удаление товара
+    DeleteAlertDialog(
+        isVisibleDialog = isVisibleDeleteDialog,
+        item = item,
+        setVisible = {isVisibleDeleteDialog = !isVisibleDeleteDialog}
+    ) {
+        deleteItem(it)
+    }
+
     ElevatedCard(
         modifier = modifier
             .padding(horizontal = 8.dp, vertical = 8.dp),
@@ -178,7 +233,7 @@ fun CardProduct(modifier: Modifier = Modifier, item: Item, convertTime: (Long) -
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium
                     )
-                    Text(text = convertTime(item.time), style = MaterialTheme.typography.bodyMedium)
+                    Text(text = date, style = MaterialTheme.typography.bodyMedium)
                 }
             }
         }
@@ -246,7 +301,9 @@ fun CardProductPreview() {
                 CardProduct(
                     modifier = Modifier,
                     item = listItem[item],
-                    convertTime = { it.toString() })
+                    date = item.toString(),
+                    updateItem = {}, deleteItem = {},
+                )
             }
         }
     }
